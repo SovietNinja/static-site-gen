@@ -46,20 +46,21 @@ class TestHTMLNode(unittest.TestCase):
         )
         
     def test_to_html_with_no_child(self):
-        try:
-            parent_node = ParentNode("div")
-        except TypeError:
-            self.res = True
-
-        self.assertTrue(self.res)
+        with self.assertRaises(TypeError):
+            parent_node = ParentNode("div") # type: ignore
+        # try:
+        #     parent_node = ParentNode("div")
+        # except TypeError:
+        #     self.res = True
+        # self.assertTrue(self.res)
 
         
     def test_to_html_with_no_tag(self):
-        try:
-            parent_node = ParentNode()
-        except TypeError:
-            self.res = True
-        self.assertTrue(self.res)
+        with self.assertRaises(TypeError):
+            parent_node = ParentNode() # type: ignore
+        # except TypeError:
+        #     self.res = True
+        # self.assertTrue(self.res)
         
     def test_parent_to_html_empty_tag_raises_exception(self):
         with self.assertRaises(ValueError):
@@ -70,6 +71,17 @@ class TestHTMLNode(unittest.TestCase):
         with self.assertRaises(ValueError):
             parent = ParentNode("div", [])
             parent.to_html()
+
+    def test_parent_to_html_with_multiple_children(self):
+        child1 = LeafNode("p", "First paragraph")
+        child2 = LeafNode("p", "Second paragraph")
+        parent_node = ParentNode("section", [child1, child2])
+        self.assertEqual(parent_node.to_html(), "<section><p>First paragraph</p><p>Second paragraph</p></section>")
+        
+    def test_parent_to_html_with_attributes(self):
+        child_node = LeafNode("a", "Link to site", {"href": "https://example.com"})
+        parent_node = ParentNode("div", [child_node], {"class": "container"})
+        self.assertEqual(parent_node.to_html(), '<div class="container"><a href="https://example.com">Link to site</a></div>')
 
 
 
