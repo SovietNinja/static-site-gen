@@ -1,5 +1,6 @@
 import unittest
-from htmlnode import HTMLNode,LeafNode,ParentNode
+from htmlnode import HTMLNode,LeafNode,ParentNode,text_node_to_html_node
+from textnode import TextType,TextNode
 
 
 class TestHTMLNode(unittest.TestCase):
@@ -82,9 +83,39 @@ class TestHTMLNode(unittest.TestCase):
         child_node = LeafNode("a", "Link to site", {"href": "https://example.com"})
         parent_node = ParentNode("div", [child_node], {"class": "container"})
         self.assertEqual(parent_node.to_html(), '<div class="container"><a href="https://example.com">Link to site</a></div>')
+    
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+        
+    def test_bold(self):
+        node = TextNode("This is a text node", TextType.BOLD)
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "b")
+        self.assertEqual(html_node.value, "This is a text node")
+        
+    def test_link(self):
+        node = TextNode("This is url node", TextType.LINK, "http://test/test.img")  
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "a")
+        self.assertEqual(html_node.value, "This is url node")
+        self.assertEqual(html_node.props, {'href': 'http://test/test.img'})
+    
+    def test_img(self):
+        node = TextNode("This is image node", TextType.IMAGE, "http://test/test.img")  
+        html_node = text_node_to_html_node(node)
+        self.assertEqual(html_node.tag, "img")
+        self.assertEqual(html_node.value, "")
+        self.assertEqual(html_node.props, {'alt': 'This is image node', 'src': 'http://test/test.img'})
 
 
 
+    # def test_print(self):
+    #     node = TextNode("This is url node", TextType.LINK, "http://test/test.img")  
+    #     html_node = text_node_to_html_node(node)
+    #     print(html_node.__repr__)
 
 if __name__ == "__main__":
     unittest.main()

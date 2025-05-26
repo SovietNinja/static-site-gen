@@ -1,3 +1,22 @@
+
+
+def text_node_to_html_node(text_node):
+    match text_node.text_type:
+        case (text_node.text_type.TEXT):
+            return LeafNode(None,text_node.text)
+        case (text_node.text_type.BOLD):
+            return LeafNode("b",text_node.text)
+        case (text_node.text_type.ITALIC):
+            return LeafNode("i",text_node.text)
+        case (text_node.text_type.CODE):
+            return LeafNode("code",text_node.text)
+        case (text_node.text_type.LINK):
+            return LeafNode("a",text_node.text,{"href":f"{text_node.url}"})
+        case (text_node.text_type.IMAGE):
+            return LeafNode("img","",{"src":f"{text_node.url}",f"alt":f"{text_node.text}"}) 
+        case _:
+            raise Exception("Node type is not supported")
+
 class HTMLNode:
     def __init__(self,tag = None,value = None,children = None,props = None):
         self.tag = tag
@@ -37,6 +56,9 @@ class HTMLNode:
         )
         
 
+        
+        
+
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
         super().__init__(tag, value, None, props)
@@ -74,3 +96,5 @@ class ParentNode(HTMLNode):
         result = f"<{self.tag}{attrs}>{child_str}</{self.tag}>"
         
         return result
+
+
