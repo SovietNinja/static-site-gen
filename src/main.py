@@ -1,4 +1,5 @@
 from textnode import TextNode, TextType
+from split_nodes_delimiter import split_nodes_delimiter
 
 # Print the TextNode object; __repr__ will be called automatically
 def main():
