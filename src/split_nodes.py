@@ -1,7 +1,27 @@
 import unittest
-import re
 from textnode import TextNode,TextType
 from extract_markdown import extract_markdown_images,extract_markdown_links
+
+
+def split_nodes_delimiter(old_nodes, delimiter, text_type):
+    new_nodes = []
+    for old_node in old_nodes:
+        if old_node.text_type != TextType.TEXT:
+            new_nodes.append(old_node)
+            continue
+        split_nodes = []
+        sections = old_node.text.split(delimiter)
+        if len(sections) % 2 == 0:
+            raise ValueError("invalid markdown, formatted section not closed")
+        for i in range(len(sections)):
+            if sections[i] == "":
+                continue
+            if i % 2 == 0:
+                split_nodes.append(TextNode(sections[i], TextType.TEXT))
+            else:
+                split_nodes.append(TextNode(sections[i], text_type))
+        new_nodes.extend(split_nodes)
+    return new_nodes
 
 def split_nodes_image(old_nodes):
     new_nodes = []
@@ -50,6 +70,23 @@ def split_nodes_links(old_nodes):
             if parsed_text != "":
                 new_nodes.append(TextNode(f"{parsed_text}", TextType.TEXT))
     return new_nodes
+
+def text_to_textnodes(text):
+    input_node = [TextNode(f"{text}", TextType.TEXT),]
+    output = []
+    output = (split_nodes_image(input_node))
+    #print("After images:", output)
+    output = (split_nodes_links(output))
+    #print("After links:", output)
+    types_dict = {
+            "**": TextType.BOLD,
+            "_" : TextType.ITALIC,
+            "`" : TextType.CODE
+            }
+    for delimiter in types_dict:
+        text_type = types_dict[delimiter]
+        output = (split_nodes_delimiter(output, delimiter, text_type))
+    return output
 
 if __name__ == "__main__":
     unittest.main()

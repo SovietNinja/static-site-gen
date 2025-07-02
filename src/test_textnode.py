@@ -1,6 +1,6 @@
 import unittest
 from textnode import TextNode, TextType
-from split_nodes_delimiter import split_nodes_delimiter
+from split_nodes import split_nodes_delimiter
 
 
 class TestTextNode(unittest.TestCase):
@@ -68,10 +68,3 @@ class TestTextNode(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-
-    # def test_split_middle_bald(self):
-    #     node1 = TextNode("1 This is a text node with **bald** text 1", TextType.TEXT),
-    #     node2 = TextNode("2 This is a text node with _italic_ text 1", TextType.TEXT),
-    #     node3 = TextNode("3 This is a text node with `code block` text 1", TextType.TEXT)
-    #     old_nodes = [node1,node2,node3]
-    #     new_node = split_nodes_delimiter(old_nodes,)
