@@ -1,20 +1,20 @@
 from enum import Enum
 import re
     
-BlockType = Enum('BlockType', ['paragraph', 'heading', 'code', 'quote', 'unordered_list', 'ordered_list'])
+BlockType = Enum('BlockType', ['PARAGRAPH', 'HEADING', 'CODE', 'QUOTE', 'ULIST', 'OLIST'])
 
 def block_to_block_type(md_block):
     if re.match(r"^\#{1,6}\ ",md_block) != None:
         #print("HEAD")
-        return BlockType.heading
+        return BlockType.HEADING
     
     if re.match(r"(?s)(^\`{3})(.+?)(\`{3})",md_block) != None:
         #print("CODE")
-        return BlockType.code
+        return BlockType.CODE
     
     if re.match(r"^\>(.+)(\n\>.+)*",md_block) != None:
         #print("QUOTE")
-        return BlockType.quote
+        return BlockType.QUOTE
 
     if re.match(r"\-\ ",md_block) != None:
         regex = r"\-\ "
@@ -25,8 +25,8 @@ def block_to_block_type(md_block):
                 line += 1
             else: break 
         if len(block_list) == line:
-            #print("UNORD")
-            return BlockType.unordered_list    
+            #print("ULIST")
+            return BlockType.ULIST    
     if re.match(r"(1\.\ )",md_block) != None:
         line = 0
         order = 1
@@ -38,7 +38,7 @@ def block_to_block_type(md_block):
                 order += 1
             else: break 
         if len(block_list) == line:
-            #print("ORDLIST")
-            return BlockType.ordered_list
+            #print("OLIST")
+            return BlockType.OLIST
     #print("paragraph")     
-    return BlockType.paragraph    
+    return BlockType.PARAGRAPH    
