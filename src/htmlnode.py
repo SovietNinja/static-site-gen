@@ -60,37 +60,31 @@ class LeafNode(HTMLNode):
         super().__init__(tag, value, None, props)
 
     def to_html(self):
-        if self.value == None or self.value == "" or not isinstance(self.value, str) :
-            raise ValueError
-        elif self.tag == None:
+        if self.value is None:
+            raise ValueError("invalid HTML: no value")
+        if self.tag is None:
             return self.value
-        else:
-            attrs = ""
-            if self.props != None and self.props != {}:
-                attrs = " "+" ".join(f'{key}="{value}"' for key, value in self.props.items())
-            return f"<{self.tag}{attrs}>{self.value}</{self.tag}>"
+        return f"<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>"
+
+    def __repr__(self):
+        return f"LeafNode({self.tag}, {self.value}, {self.props})"
     
         
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
         super().__init__(tag, None, children, props)
-    
+
     def to_html(self):
-        if self.tag == None or self.tag == "":
-            raise ValueError("Tag can't be empty")
-        if self.children == None or len(self.children) == 0:
-            raise ValueError("Children missing")
-        else:
-            attrs = ""
-            if self.props != None and self.props != {}:
-                attrs = " "+" ".join(f'{key}="{value}"' for key, value in self.props.items())
-        child_str = ""
-
+        if self.tag is None:
+            raise ValueError("invalid HTML: no tag")
+        if self.children is None:
+            raise ValueError("invalid HTML: no children")
+        children_html = ""
         for child in self.children:
-            child_str += child.to_html()
+            children_html += child.to_html()
+        return f"<{self.tag}{self.props_to_html()}>{children_html}</{self.tag}>"
 
-        result = f"<{self.tag}{attrs}>{child_str}</{self.tag}>"
-        
-        return result
+    def __repr__(self):
+        return f"ParentNode({self.tag}, children: {self.children}, {self.props})"
 
 
