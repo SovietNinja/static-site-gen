@@ -19,7 +19,7 @@ def main():
     makedir(current_path)
     clean_dir(public_path)            
     move_contents(static_path,public_path)
-    generate_pages_recursive(content_path,"teamplate.html",public_path)
+    generate_pages_recursive(content_path,"template.html",public_path)
 
 
 #current_path_full = os.path.abspath(os.getcwd())
@@ -118,18 +118,14 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
     contents = os.listdir(dir_path_content)
     for content in contents:
         content = os.path.join(dir_path_content,content)
-        try:
-            print(content)
-            if os.path.isfile(content):
-                dest_file = os.path.splitext(os.path.basename(content))[0] + ".html"
-                dest_file = os.path.join(dest_dir_path, dest_file)
-                generate_page(content,template_path,dest_file)
-                print(f"generating html from {content} into {dest_file}")
-            else:
-                generate_pages_recursive(content,template_path,os.path.join(dest_dir_path,os.path.basename(content)))
-                print(content+ " is folder")
-        except ValueError as error: 
-            print(error) 
+        if os.path.isfile(content):
+            dest_file = os.path.splitext(os.path.basename(content))[0] + ".html"
+            dest_file = os.path.join(dest_dir_path, dest_file)
+            generate_page(content,template_path,dest_file)
+            #print(f"generating html from {content} into {dest_file}")
+        else:
+            generate_pages_recursive(content,template_path,os.path.join(dest_dir_path,os.path.basename(content)))
+            #print(content + " is folder")
 
 if __name__ == "__main__":
     main()
