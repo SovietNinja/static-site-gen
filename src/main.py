@@ -2,58 +2,47 @@ import os
 from pathlib import Path
 import shutil
 import re
+import sys
 from markdown_to_html_node import markdown_to_html_node
 
-
-
+if len(sys.argv) == 1:
+    basepath = "/"
+else: basepath = sys.argv[1]
 
 
 def main():
-    # Create a TextNode object
-    # Test_text = TextNode("123", TextType.LINK, "https://gratisography.com/wp-content/uploads/2023/05/gratisography-kitten-chef-free-stock-photo.jpg")
-    # print(Test_text)
-    current_path = os.getcwd()
-    public_path = os.path.join(current_path,"public")
-    static_path = os.path.join(current_path,"static")
-    content_path = os.path.join(current_path,"content")
-    makedir(current_path)
-    clean_dir(public_path)            
-    move_contents(static_path,public_path)
-    generate_pages_recursive(content_path,"template.html",public_path)
-
-
-#current_path_full = os.path.abspath(os.getcwd())
-
-def check_path(path):
-    exist = {"public" : False, "static": False}
-    if os.path.exists('public'):
-        exist["public"] = True
+    target_path = "./docs"
+    static_path = "./static"
+    content_path = "./content"
+    template_path = "./template.html"
+    makedir(target_path)
+    clean_dir(target_path)            
+    move_contents(static_path,target_path)
+    generate_pages_recursive(content_path,template_path,target_path)
+    
+    
+def check_path(target_path):
+    if os.path.exists(f'{target_path}'):
+        exist = True
     else : 
-        exist["public"]  = False
-        #print("folder public is absent")
-    if os.path.exists('static'):
-        exist["static"] = True
-    else: 
-        exist["static"] = False
-        #print("folder static is absent")
+        exist = False
+        #print(f"folder {target_path} is absent")
     return exist
 
-def makedir(path):
-    if check_path(path)["static"] and check_path(path)["public"]:
+def makedir(target_path):
+    if check_path(target_path):
+        print("Target folder exists")
         pass
     else:
-        if check_path(path)["public"] == False:
-            print("public folder is absent, creating public folder")
-            os.mkdir("public")
-        if check_path(path)["static"] == False:
-            os.mkdir("static")
-            print("static folder is absent, creating static folder")
+        os.mkdir(target_path)
+        print("Target folder is absent, creating target folder")
     pass
 
 
 def clean_dir(path):
     contents = os.listdir(path)
     for content in contents:
+        print(content)
         content = os.path.join(path,content)
         try:
             if os.path.isdir(content):
@@ -107,6 +96,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(md_content)
     template = template.replace('{{ Title }}',title)
     template = template.replace('{{ Content }}',html)
+    template = template.replace('href="/',f'href="{basepath}')
+    template = template.replace('src="/',f'src="{basepath}')
     dest_dir_path = os.path.dirname(dest_path)
     if dest_dir_path != "":
         os.makedirs(dest_dir_path, exist_ok=True)

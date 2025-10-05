@@ -10,7 +10,7 @@ __pycache__/
 src/test.py
 
 # Public folder
-public
+#public
 
 # Distribution / packaging
 .Python
